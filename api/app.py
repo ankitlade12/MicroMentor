@@ -600,5 +600,51 @@ def get_champion_stats(player_id):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/sync', methods=['POST'])
+def sync_grid_data():
+    """Trigger data sync from GRID API to database"""
+    try:
+        limit = request.json.get('limit', 10) if request.json else 10
+        
+        # Run the ETL pipeline
+        etl.run_ingestion(title_id=3, limit=limit)
+        
+        return jsonify({
+            'status': 'success',
+            'message': f'Synced {limit} series from GRID API'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/init-db', methods=['POST'])
+def init_database():
+    """Initialize database tables"""
+    try:
+        from sqlalchemy import text
+        
+        # Read and execute schema
+        schema_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'database_schema.sql')
+        
+        with open(schema_path, 'r') as f:
+            schema_sql = f.read()
+        
+        # Execute each statement separately
+        with engine.connect() as conn:
+            for statement in schema_sql.split(';'):
+                statement = statement.strip()
+                if statement:
+                    conn.execute(text(statement))
+            conn.commit()
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Database tables created successfully'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
+
