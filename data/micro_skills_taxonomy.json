@@ -1,0 +1,118 @@
+{
+  "laning_phase": {
+    "cs_at_10": {
+      "name": "CS @ 10 Minutes",
+      "description": "Creep score at 10-minute mark",
+      "calculation": "total_cs_at_10min",
+      "weight": 0.15,
+      "roles_applicable": ["top", "mid", "adc"]
+    },
+    "gold_diff_at_10": {
+      "name": "Gold Difference @ 10",
+      "description": "Gold lead/deficit at 10 minutes",
+      "calculation": "player_gold_10min - opponent_gold_10min",
+      "weight": 0.12,
+      "roles_applicable": ["all"]
+    },
+    "xp_diff_at_10": {
+      "name": "XP Difference @ 10",
+      "calculation": "player_xp_10min - opponent_xp_10min",
+      "weight": 0.10
+    },
+    "solo_kills": {
+      "name": "Solo Kills",
+      "weight": 0.08
+    },
+    "deaths_in_lane": {
+      "name": "Deaths in Lane",
+      "weight": 0.08,
+      "inverse": true
+    }
+  },
+  "vision_control": {
+    "vision_score_per_min": {
+      "name": "Vision Score per Minute",
+      "calculation": "total_vision_score / game_duration_minutes",
+      "weight": 0.08,
+      "roles_applicable": ["support", "jungle"]
+    },
+    "control_wards_purchased": {
+      "name": "Control Wards Bought",
+      "weight": 0.05
+    },
+    "wards_placed_total": {
+      "name": "Total Wards Placed",
+      "weight": 0.04
+    },
+    "wards_cleared": {
+      "name": "Enemy Wards Destroyed",
+      "weight": 0.05
+    },
+    "vision_denial_efficiency": {
+      "name": "Vision Denial Efficiency",
+      "weight": 0.06
+    }
+  },
+  "combat_efficiency": {
+    "damage_per_gold": {
+      "name": "Damage per Gold Spent",
+      "calculation": "total_damage_dealt / gold_spent",
+      "weight": 0.10
+    },
+    "kill_participation": {
+      "name": "Kill Participation %",
+      "calculation": "(kills + assists) / team_total_kills * 100",
+      "weight": 0.12
+    },
+    "death_share": {
+      "name": "Death Share %",
+      "calculation": "deaths / team_total_deaths * 100",
+      "weight": 0.08,
+      "inverse": true
+    },
+    "kda": {
+      "name": "KDA Ratio",
+      "weight": 0.10
+    },
+    "average_combat_rating": {
+      "name": "Average Combat Rating",
+      "weight": 0.10
+    }
+  },
+  "objective_control": {
+    "objective_damage_share": {
+      "name": "Objective Damage %",
+      "calculation": "damage_to_objectives / team_objective_damage * 100",
+      "weight": 0.07
+    },
+    "first_blood_participation": {
+      "name": "First Blood Involvement",
+      "weight": 0.04
+    },
+    "epic_monster_participation": {
+      "name": "Baron/Dragon Participation",
+      "weight": 0.06
+    },
+    "tower_damage_contribution": {
+      "name": "Tower Damage Contribution",
+      "weight": 0.05
+    },
+    "epic_monster_steals": {
+      "name": "Epic Monster Steals",
+      "weight": 0.08
+    }
+  },
+  "consistency": {
+    "performance_variance": {
+      "name": "Performance Variance",
+      "description": "Standard deviation of KDA over last 10 games",
+      "calculation": "std_dev(kda_last_10_games)",
+      "weight": 0.04,
+      "inverse": true
+    },
+    "clutch_performance": {
+      "name": "Clutch Performance",
+      "weight": 0.06
+    }
+  }
+}

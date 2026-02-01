@@ -1,0 +1,25 @@
+[project]
+name = "micromentor"
+version = "1.0.0"
+description = "AI-powered individual player development platform that transforms micro-level esports analytics into actionable coaching insights"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+    "flask-cors>=6.0.2",
+    "joblib>=1.5.3",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.1",
+    "pandas>=2.3.3",
+    "plotly>=6.5.2",
+    "psycopg2-binary>=2.9.11",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.0",
+    "seaborn>=0.13.2",
+    "sqlalchemy>=2.0.46",
+    "streamlit>=1.53.1",
+    "xgboost>=3.1.3",
+]
