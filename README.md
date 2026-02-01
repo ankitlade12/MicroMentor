@@ -8,8 +8,6 @@
 
 **The first AI-powered platform that transforms micro-level esports analytics into actionable coaching insights.**
 
-![MicroMentor Dashboard](screenshots/dashboard_overview.png)
-
 ## New Features
 
 | Feature | Description |
