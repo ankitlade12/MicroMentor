@@ -209,17 +209,16 @@ def get_player_trends(player_id):
     try:
         query = f"""
             SELECT 
-                m.game_date,
-                pms.cs_at_10,
-                pms.vision_score_per_min,
-                pms.kill_participation,
-                pms.kda,
-                pms.game_result,
-                pms.champion
-            FROM player_micro_skills pms
-            JOIN matches m ON pms.match_id = m.match_id
-            WHERE pms.player_id = '{player_id}'
-            ORDER BY m.game_date ASC
+                created_at as game_date,
+                cs_at_10,
+                vision_score_per_min,
+                kill_participation,
+                kda,
+                game_result,
+                champion
+            FROM player_micro_skills
+            WHERE player_id = '{player_id}'
+            ORDER BY created_at ASC
             LIMIT 20
         """
         df = pd.read_sql(query, engine)
@@ -254,11 +253,10 @@ def get_player_insights(player_id):
     """Generate automated performance insights with data-backed feedback"""
     try:
         query = """
-            SELECT cs_at_10, vision_score_per_min, kill_participation, kda, game_date, gold_diff_at_10
-            FROM player_micro_skills pms
-            JOIN matches m ON pms.match_id = m.match_id
-            WHERE pms.player_id = ?
-            ORDER BY m.game_date DESC
+            SELECT cs_at_10, vision_score_per_min, kill_participation, kda, created_at as game_date, gold_diff_at_10
+            FROM player_micro_skills
+            WHERE player_id = ?
+            ORDER BY created_at DESC
             LIMIT 20
         """
         df = pd.read_sql(query, engine, params=(player_id,))
@@ -515,15 +513,14 @@ def get_match_history(player_id):
     try:
         query = """
             SELECT 
-                m.game_date,
-                pms.game_result,
-                pms.champion,
-                pms.kda,
-                pms.cs_at_10
-            FROM player_micro_skills pms
-            JOIN matches m ON pms.match_id = m.match_id
-            WHERE pms.player_id = ?
-            ORDER BY m.game_date DESC
+                created_at as game_date,
+                game_result,
+                champion,
+                kda,
+                cs_at_10
+            FROM player_micro_skills
+            WHERE player_id = ?
+            ORDER BY created_at DESC
             LIMIT 10
         """
         df = pd.read_sql(query, engine, params=(player_id,))
