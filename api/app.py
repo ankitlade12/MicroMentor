@@ -69,7 +69,7 @@ def get_player_profile(player_id):
             })
 
         # Try to get from database first
-        query = "SELECT * FROM player_micro_skills WHERE player_id = ? LIMIT 1"
+        query = "SELECT * FROM player_micro_skills WHERE player_id = %s LIMIT 1"
         try:
             # Using parameter substitution to avoid SQL injection
             df = pd.read_sql(query, engine, params=(player_id,))
@@ -106,7 +106,7 @@ def get_micro_skills(player_id):
     """Get detailed micro-skill breakdown"""
     try:
         # Try to get average stats from database
-        query = "SELECT * FROM player_micro_skills WHERE player_id = ?"
+        query = "SELECT * FROM player_micro_skills WHERE player_id = %s"
         try:
             df = pd.read_sql(query, engine, params=(player_id,))
             if not df.empty:
@@ -255,7 +255,7 @@ def get_player_insights(player_id):
         query = """
             SELECT cs_at_10, vision_score_per_min, kill_participation, kda, created_at as game_date, gold_diff_at_10
             FROM player_micro_skills
-            WHERE player_id = ?
+            WHERE player_id = %s
             ORDER BY created_at DESC
             LIMIT 20
         """
@@ -341,7 +341,7 @@ def get_macro_review(player_id):
         query = """
             SELECT match_id, champion, game_result, cs_at_10, gold_diff_at_10, kda, tower_damage_contribution, first_blood_participation
             FROM player_micro_skills
-            WHERE player_id = ?
+            WHERE player_id = %s
             ORDER BY created_at DESC
             LIMIT 1
         """
@@ -519,7 +519,7 @@ def get_match_history(player_id):
                 kda,
                 cs_at_10
             FROM player_micro_skills
-            WHERE player_id = ?
+            WHERE player_id = %s
             ORDER BY created_at DESC
             LIMIT 10
         """
@@ -564,7 +564,7 @@ def get_champion_stats(player_id):
                 AVG(cs_at_10) as avg_cs_at_10,
                 SUM(CASE WHEN game_result = 'WIN' THEN 1 ELSE 0 END) * 100.0 / COUNT(*) as win_rate
             FROM player_micro_skills
-            WHERE player_id = ?
+            WHERE player_id = %s
             GROUP BY champion
             ORDER BY games DESC
         """
