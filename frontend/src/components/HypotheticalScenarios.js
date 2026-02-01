@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+
 const HypotheticalScenarios = ({ playerId }) => {
   const [question, setQuestion] = useState('');
   const [result, setResult] = useState(null);
@@ -12,7 +14,7 @@ const HypotheticalScenarios = ({ playerId }) => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`http://localhost:5001/api/players/${playerId}/hypothetical`, {
+      const response = await axios.post(`${API_BASE}/players/${playerId}/hypothetical`, {
         question: question
       });
       setResult(response.data);
@@ -47,11 +49,11 @@ const HypotheticalScenarios = ({ playerId }) => {
           placeholder="e.g. What if we took Baron instead of pushing bot?"
           style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '0.9rem' }}
         />
-        <button type="submit" disabled={loading} style={{ 
-          padding: '10px 20px', 
-          backgroundColor: '#667eea', 
-          color: 'white', 
-          border: 'none', 
+        <button type="submit" disabled={loading} style={{
+          padding: '10px 20px',
+          backgroundColor: '#667eea',
+          color: 'white',
+          border: 'none',
           borderRadius: '8px',
           cursor: loading ? 'not-allowed' : 'pointer',
           fontWeight: 'bold',
@@ -81,9 +83,9 @@ const HypotheticalScenarios = ({ playerId }) => {
       `}</style>
 
       {result && !result.error && (
-        <div className="prediction-result" style={{ 
-          padding: '20px', 
-          backgroundColor: '#f8faff', 
+        <div className="prediction-result" style={{
+          padding: '20px',
+          backgroundColor: '#f8faff',
           borderRadius: '12px',
           border: '1px solid #e0e6ff'
         }}>
@@ -101,8 +103,8 @@ const HypotheticalScenarios = ({ playerId }) => {
                 );
               })}
               <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #eee', fontWeight: 'bold', color: '#667eea' }}>
-                Recommendation: { (result.scenarios || scenarios).sort((a,b) => b.probability - a.probability)[0].label.split(':')[0] } 
-                <span style={{ marginLeft: '10px', color: '#4caf50' }}>(+{ (result.scenarios || scenarios).sort((a,b) => b.probability - a.probability)[0].probability - (result.scenarios || scenarios).sort((a,b) => b.probability - a.probability)[1].probability }% edge)</span>
+                Recommendation: {(result.scenarios || scenarios).sort((a, b) => b.probability - a.probability)[0].label.split(':')[0]}
+                <span style={{ marginLeft: '10px', color: '#4caf50' }}>(+{(result.scenarios || scenarios).sort((a, b) => b.probability - a.probability)[0].probability - (result.scenarios || scenarios).sort((a, b) => b.probability - a.probability)[1].probability}% edge)</span>
               </div>
             </div>
 

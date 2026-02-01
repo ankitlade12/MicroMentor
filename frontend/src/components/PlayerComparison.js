@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Plot from 'react-plotly.js';
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Generate consistent mock data based on player name
 const generateMockStats = (playerName) => {
