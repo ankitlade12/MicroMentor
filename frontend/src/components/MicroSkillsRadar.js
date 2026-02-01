@@ -6,7 +6,7 @@ const MicroSkillsRadar = ({ data }) => {
   const values = categories.map(cat => {
     const skills = Object.values(data[cat]);
     if (skills.length === 0) return 0;
-    const avgPercentile = skills.reduce((sum, skill) => 
+    const avgPercentile = skills.reduce((sum, skill) =>
       sum + (skill.percentile || 0), 0) / skills.length;
     return avgPercentile;
   });
@@ -26,10 +26,17 @@ const MicroSkillsRadar = ({ data }) => {
       radialaxis: {
         visible: true,
         range: [0, 100]
-      }
+      },
+      bgcolor: 'transparent'
     },
     showlegend: false,
-    autosize: true
+    autosize: true,
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    transition: {
+      duration: 500,
+      easing: 'cubic-in-out'
+    }
   };
 
   return (

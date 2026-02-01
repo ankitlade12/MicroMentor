@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# Devpost submission (local only)
+DEVPOST.md
 .Python
 build/
 develop-eggs/
