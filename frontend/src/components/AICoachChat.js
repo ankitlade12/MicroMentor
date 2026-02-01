@@ -7,7 +7,7 @@ const AICoachChat = ({ playerId }) => {
     const [messages, setMessages] = useState([
         {
             type: 'ai',
-            text: "👋 Hi! I'm your AI Coach. Ask me anything about your gameplay, like:\n• \"Why did I lose lane phase?\"\n• \"What should I focus on this week?\"\n• \"What if I had contested Drake?\""
+            text: "Hi! I'm your AI Coach. Ask me anything about your gameplay, like:\n- \"Why did I lose lane phase?\"\n- \"What should I focus on this week?\"\n- \"What if I had contested Drake?\""
         }
     ]);
     const [input, setInput] = useState('');
@@ -21,17 +21,31 @@ const AICoachChat = ({ playerId }) => {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognitionRef.current = new SpeechRecognition();
             recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = false;
+            recognitionRef.current.interimResults = true;
             recognitionRef.current.lang = 'en-US';
 
             recognitionRef.current.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
+                const transcript = Array.from(event.results)
+                    .map(result => result[0].transcript)
+                    .join('');
                 setInput(transcript);
-                setIsListening(false);
+
+                // If this is the final result, stop listening
+                if (event.results[0].isFinal) {
+                    setIsListening(false);
+                }
             };
 
-            recognitionRef.current.onerror = () => {
+            recognitionRef.current.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
                 setIsListening(false);
+                if (event.error === 'not-allowed') {
+                    alert('Microphone access denied. Please allow microphone access in your browser settings.');
+                } else if (event.error === 'no-speech') {
+                    // Silent fail for no speech detected
+                } else {
+                    alert(`Voice error: ${event.error}. Please try again.`);
+                }
             };
 
             recognitionRef.current.onend = () => {
@@ -60,13 +74,13 @@ const AICoachChat = ({ playerId }) => {
                 });
 
                 const data = response.data;
-                let aiResponse = `🔮 **Strategic Analysis:**\n\n${data.prediction}\n\n`;
+                let aiResponse = `**Strategic Analysis:**\n\n${data.prediction}\n\n`;
 
                 if (data.scenarios && data.scenarios.length > 0) {
                     aiResponse += "**Scenario Breakdown:**\n";
                     data.scenarios.forEach(scenario => {
-                        const emoji = scenario.probability > 50 ? '✅' : scenario.probability > 30 ? '⚠️' : '❌';
-                        aiResponse += `${emoji} ${scenario.label}: ${scenario.probability}% → ${scenario.outcome}\n`;
+                        const marker = scenario.probability > 50 ? '[HIGH]' : scenario.probability > 30 ? '[MED]' : '[LOW]';
+                        aiResponse += `${marker} ${scenario.label}: ${scenario.probability}% - ${scenario.outcome}\n`;
                     });
                 }
 
@@ -77,18 +91,18 @@ const AICoachChat = ({ playerId }) => {
         }
 
         if (lowerQuestion.includes('lane') || lowerQuestion.includes('laning') || lowerQuestion.includes('cs')) {
-            return `📊 **Laning Phase Analysis:**\n\nBased on your recent games:\n• Your CS@10 is trending ${Math.random() > 0.5 ? 'upward ↑' : 'stable →'}\n• Gold difference at 10 min averages +${Math.floor(Math.random() * 300 + 50)}\n\n**Recommendation:** Focus on trading windows between waves. You're missing 2-3 CS per wave during trades. Practice the "push and trade" pattern.`;
+            return `**Laning Phase Analysis:**\n\nBased on your recent games:\n- Your CS@10 is trending ${Math.random() > 0.5 ? 'upward' : 'stable'}\n- Gold difference at 10 min averages +${Math.floor(Math.random() * 300 + 50)}\n\n**Recommendation:** Focus on trading windows between waves. You're missing 2-3 CS per wave during trades. Practice the "push and trade" pattern.`;
         }
 
         if (lowerQuestion.includes('focus') || lowerQuestion.includes('improve') || lowerQuestion.includes('week')) {
-            return `🎯 **This Week's Focus Areas:**\n\n1. **Vision Control** (Priority: HIGH)\n   • You're placing 30% fewer control wards than top performers\n   • Target: 2+ control wards per game\n\n2. **Kill Participation** (Priority: MEDIUM)\n   • Current: 62%, Target: 70%\n   • Join more skirmishes in river\n\n3. **CS Consistency** (Priority: LOW)\n   • Maintain your current trajectory\n   • You'll hit 75th percentile in ~3 games`;
+            return `**This Week's Focus Areas:**\n\n1. **Vision Control** (Priority: HIGH)\n   - You're placing 30% fewer control wards than top performers\n   - Target: 2+ control wards per game\n\n2. **Kill Participation** (Priority: MEDIUM)\n   - Current: 62%, Target: 70%\n   - Join more skirmishes in river\n\n3. **CS Consistency** (Priority: LOW)\n   - Maintain your current trajectory\n   - You'll hit 75th percentile in ~3 games`;
         }
 
         if (lowerQuestion.includes('why') && (lowerQuestion.includes('lose') || lowerQuestion.includes('lost'))) {
-            return `🔍 **Loss Analysis:**\n\nLooking at your recent losses, I've identified:\n\n1. **Isolated Deaths** (47% of losses)\n   • Deaths without nearby teammates in the 15-25 min window\n   • Recommendation: Track teammate positions before extending\n\n2. **Objective Control** (31% of losses)\n   • Drake/Baron setups lacking vision\n   • Recommendation: Pink ward pit 60s before spawn\n\n3. **Wave Management** (22% of losses)\n   • Being caught while pushing without vision\n   • Recommendation: Only push with 2+ wards placed`;
+            return `**Loss Analysis:**\n\nLooking at your recent losses, I've identified:\n\n1. **Isolated Deaths** (47% of losses)\n   - Deaths without nearby teammates in the 15-25 min window\n   - Recommendation: Track teammate positions before extending\n\n2. **Objective Control** (31% of losses)\n   - Drake/Baron setups lacking vision\n   - Recommendation: Pink ward pit 60s before spawn\n\n3. **Wave Management** (22% of losses)\n   - Being caught while pushing without vision\n   - Recommendation: Only push with 2+ wards placed`;
         }
 
-        return `🤖 I analyzed your question about "${question.substring(0, 50)}..."\n\nBased on your performance data:\n• Your overall trajectory is positive\n• Focus on consistency in your strongest metrics\n• Consider reviewing your recent games for decision-making patterns\n\nTry asking me specific questions like "What if I had contested that Baron?" or "Why am I losing lane?"`;
+        return `I analyzed your question about "${question.substring(0, 50)}..."\n\nBased on your performance data:\n- Your overall trajectory is positive\n- Focus on consistency in your strongest metrics\n- Consider reviewing your recent games for decision-making patterns\n\nTry asking me specific questions like "What if I had contested that Baron?" or "Why am I losing lane?"`;
     };
 
     const handleSend = async () => {
@@ -112,9 +126,9 @@ const AICoachChat = ({ playerId }) => {
         }
     };
 
-    const toggleVoice = () => {
+    const toggleVoice = async () => {
         if (!recognitionRef.current) {
-            alert('Voice recognition not supported in this browser. Try Chrome!');
+            alert('Voice recognition is not supported in this browser. Please use Chrome or Edge.');
             return;
         }
 
@@ -122,8 +136,15 @@ const AICoachChat = ({ playerId }) => {
             recognitionRef.current.stop();
             setIsListening(false);
         } else {
-            recognitionRef.current.start();
-            setIsListening(true);
+            try {
+                // Request microphone permission explicitly
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+                recognitionRef.current.start();
+                setIsListening(true);
+            } catch (err) {
+                console.error('Microphone error:', err);
+                alert('Could not access microphone. Please check your browser permissions.');
+            }
         }
     };
 
